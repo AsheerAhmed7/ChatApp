@@ -14,18 +14,15 @@ import {heightToDp, widthToDp} from '../utils/responsive';
 
 const Home = () => {
   const navigation = useNavigation();
-  const data = useSelector(state => state);
+  const email = useSelector(state => state.email);
+  const Name = useSelector(state => state.Name);
   const dispatch = useDispatch();
-  const id = useSelector(state => state._id);
-
-  useEffect(() => {
-    console.log('stateeeeeeeee===== heloo=== ', data.contacted[0]);
-  }, [data]);
-
   const handleLogout = () => {
-    data?.socket.disconnect();
-    console.log('Disconnected from socket server');
-    navigation.navigate('Login');
+    dispatch({type: 'LOGOUT'});
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Login'}],
+    });
   };
 
   return (
@@ -33,8 +30,8 @@ const Home = () => {
       <ScrollView style={{flex: 1}}>
         <View style={styles.container}>
           <View style={styles.profileContainer}>
-            <Text style={styles.profileText}>{data?.email}</Text>
-            <Text style={styles.profileText}>{data?.email}</Text>
+            <Text style={styles.profileText}>{Name ? Name : null}</Text>
+            <Text style={styles.profileText}>{email ? email : null}</Text>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity

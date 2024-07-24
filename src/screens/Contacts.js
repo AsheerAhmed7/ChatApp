@@ -12,7 +12,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchPeople} from '../redux/action';
 import {heightToDp, widthToDp} from '../utils/responsive';
 import {useNavigation} from '@react-navigation/native';
-
+import io from 'socket.io-client';
+const SOCKET_SERVER_URL = 'http://192.168.1.12:3000';
 const Contacts = () => {
   const id = useSelector(state => state._id);
   const people = useSelector(state => state.people);
@@ -20,9 +21,21 @@ const Contacts = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    console.log('dataaaaaaaaaaaaa===== ', id);
     dispatch(fetchPeople(id));
   }, []);
-
+  useEffect(() => {
+    console.log('atttttt contacctttttttttttsss');
+    const socket = io(SOCKET_SERVER_URL);
+    dispatch({type: 'ADD_SOCKET', payload: socket});
+    socket.on('connect', () => {
+      socket.emit('addSocket', {id: id});
+    });
+    return () => {
+      socket.disconnect();
+      dispatch({type: 'ADD_SOCKET', payload: null});
+    };
+  }, []);
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView>

@@ -1,4 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {applyMiddleware, createStore} from 'redux';
+import {persistStore} from 'redux-persist';
+import createFilter from 'redux-persist-transform-filter';
+import persistReducer from 'redux-persist/es/persistReducer';
 import {thunk} from 'redux-thunk';
 const initialState = {
   _id: null,
@@ -46,8 +50,23 @@ const reducer = (state = initialState, action) => {
         messages: [...state.messages, action.payload],
       };
     }
+    case 'LOGOUT':
+      return {
+        ...initialState,
+      };
+    default:
+      return state;
   }
 };
+const saveSubsetBlacklistFilter = createFilter('reducer', null, ['socket']);
+
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  transforms: [saveSubsetBlacklistFilter],
+};
+
+const persistReducers = persistReducer(persistConfig, reducer);
 const middleware = applyMiddleware(thunk);
-const store = createStore(reducer, middleware);
-export default store;
+export const store = createStore(persistReducers, middleware);
+export const persistStores = persistStore(store);

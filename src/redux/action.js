@@ -1,6 +1,6 @@
-import io from 'socket.io-client';
+import {StackActions} from '@react-navigation/native';
+
 const API_URL = 'http://192.168.1.12:3000';
-const SOCKET_SERVER_URL = 'http://192.168.1.12:3000';
 export const addUser = async (data, navigation) => {
   try {
     const requestOptions = {
@@ -13,7 +13,7 @@ export const addUser = async (data, navigation) => {
 
     let response = await fetch(`${API_URL}/users/addUser`, requestOptions);
     if (response.status == 200) {
-      navigation.navigate('Login');
+      navigation.dispatch(StackActions.replace('Login'));
     }
   } catch (err) {
     console.log('errrrr', err);
@@ -34,15 +34,9 @@ export const login = (data, navigation) => async dispatch => {
       response = await response.json();
       dispatch({type: 'ADD_USER_DETAILS', payload: response.data});
       console.log('login dataaa', response.data);
-      const id = response.data._id;
-      const socket = io(SOCKET_SERVER_URL);
-      console.log('sockeeetttttt', socket, id);
-      dispatch({type: 'ADD_SOCKET', payload: socket});
-      socket.on('connect', () => {
-        console.log('Connected to socket server');
-        socket.emit('addSocket', {id});
-        console.log('Navigationnnn eachedd');
-        navigation.navigate('Home');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
       });
     }
   } catch (err) {

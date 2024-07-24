@@ -1,8 +1,10 @@
-import React from 'react';
 import {StyleSheet} from 'react-native';
+import {heightToDp, widthToDp} from '../utils/responsive'; // Adjust the path as necessary
+
 const styles = StyleSheet.create({
   containor: {
     flex: 1,
+    backgroundColor: '#302D2D',
   },
   heading: {
     flex: 0.3,
@@ -13,26 +15,29 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: 'lightgrey',
-    width: '80%',
-    marginTop: 4,
-    marginBottom: 8,
-    borderRadius: 40,
+    width: widthToDp('80%'), // Responsive width
+    marginTop: heightToDp('2%'), // Responsive margin
+    marginBottom: heightToDp('1%'), // Responsive margin
+    borderRadius: widthToDp('10%'), // Responsive border radius
+    paddingHorizontal: widthToDp('4%'), // Responsive padding
+    paddingVertical: heightToDp('1.5%'), // Responsive padding
   },
   btn: {
     backgroundColor: '#3D3D3D',
     borderWidth: 2,
     borderColor: '#3D3D3D',
-    width: '90%',
-    borderRadius: 45,
+    width: widthToDp('90%'), // Responsive width
+    borderRadius: widthToDp('10%'), // Responsive border radius
     justifyContent: 'center',
     alignItems: 'center',
-    height: 50,
-    marginTop: 20,
+    height: heightToDp('12%'), // Responsive height
+    marginTop: heightToDp('2%'), // Responsive margin
   },
   navigate: {
     textAlign: 'center',
     color: 'black',
-    fontSize: 15,
+    fontSize: widthToDp('4%'), // Responsive font size
   },
 });
+
 export default styles;
