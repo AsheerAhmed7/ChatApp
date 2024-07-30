@@ -37,7 +37,9 @@ const ChatRoom = props => {
 
   socket.on('receivedMessage', receivedData => {
     console.log('received message: ', receivedData);
-    dispatch({type: 'UPDATE_MESSAGES', payload: receivedData});
+    if (receivedData.senderID == receiver._id) {
+      dispatch({type: 'UPDATE_MESSAGES', payload: receivedData.message});
+    }
   });
 
   useEffect(() => {
@@ -55,7 +57,7 @@ const ChatRoom = props => {
           style={styles.profileImage}
         />
         <View style={styles.headerTextContainer}>
-          <Text style={styles.profileName}>John Doe</Text>
+          <Text style={styles.profileName}>{receiver.email}</Text>
           <Text style={styles.profileEmail}>{receiver.email}</Text>
         </View>
       </View>
