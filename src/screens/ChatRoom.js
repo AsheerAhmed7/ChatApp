@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -20,8 +20,10 @@ const ChatRoom = props => {
   const receiver = props.route.params.receiver;
   const [message, setMessage] = useState('');
   const messages = useSelector(state => state.messages);
+  const scrollViewRef = useRef();
 
   const dispatch = useDispatch();
+
   const sendMessage = () => {
     const data = {
       senderID: id,
@@ -30,17 +32,16 @@ const ChatRoom = props => {
     };
     dispatch(addMessage(data));
     socket.emit('sendMessage', data);
+    setMessage('');
   };
+
   socket.on('receivedMessage', receivedData => {
-    console.log('receiveddddddddmesssageeeee   ', receivedData);
-    receivedData = {message, senderID};
-    if (receiver._id == senderID) {
-      dispatch({type: 'UPDATE_MESSAGES', payload: message});
-    }
+    console.log('received message: ', receivedData);
+    dispatch({type: 'UPDATE_MESSAGES', payload: receivedData});
   });
+
   useEffect(() => {
     dispatch(fetchMessages(id, receiver._id));
-    console.log('receiverrrrrIDDDD  ', receiver._id);
     return () => {
       dispatch({type: 'ADD_MESSAGES', payload: null});
     };
@@ -58,38 +59,33 @@ const ChatRoom = props => {
           <Text style={styles.profileEmail}>{receiver.email}</Text>
         </View>
       </View>
-      <ScrollView style={styles.chatContainer}>
+      <ScrollView
+        style={styles.chatContainer}
+        ref={scrollViewRef}
+        onContentSizeChange={() =>
+          scrollViewRef.current.scrollToEnd({animated: true})
+        }>
         <View style={styles.messageContainer}>
-          {messages
-            ? messages?.map((item, index) => {
-                return (
-                  <View key={index}>
-                    {item.senderID == id ? (
-                      <View
-                        style={[
-                          styles.messageBubble,
-                          styles.messageBubbleRight,
-                        ]}>
-                        <Text style={styles.messageText}>{item.message}</Text>
-                      </View>
-                    ) : (
-                      <View style={styles.messageBubble}>
-                        <Text style={styles.messageText}>{item.message}</Text>
-                      </View>
-                    )}
-                  </View>
-                );
-              })
-            : null}
+          {messages &&
+            messages.map((item, index) => (
+              <View
+                key={index}
+                style={
+                  item.senderID === id
+                    ? styles.messageBubbleRight
+                    : styles.messageBubbleLeft
+                }>
+                <Text style={styles.messageText}>{item.message}</Text>
+              </View>
+            ))}
         </View>
       </ScrollView>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.textInput}
           placeholder="Type a message"
-          onChangeText={value => {
-            setMessage(value);
-          }}
+          value={message}
+          onChangeText={setMessage}
         />
         <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
           <Text style={styles.sendButtonText}>Send</Text>
@@ -135,16 +131,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  messageBubble: {
+  messageBubbleLeft: {
     maxWidth: '70%',
     padding: widthToDp(3),
     backgroundColor: '#e1ffc7',
     borderRadius: widthToDp(2),
     marginBottom: widthToDp(2),
+    alignSelf: 'flex-start',
   },
   messageBubbleRight: {
-    alignSelf: 'flex-end',
+    maxWidth: '70%',
+    padding: widthToDp(3),
     backgroundColor: '#d1f4ff',
+    borderRadius: widthToDp(2),
+    marginBottom: widthToDp(2),
+    alignSelf: 'flex-end',
   },
   messageText: {
     fontSize: widthToDp(4),
@@ -165,7 +166,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: widthToDp(4),
     paddingVertical: heightToDp(1),
   },
-
   sendButton: {
     marginLeft: widthToDp(2),
     backgroundColor: '#0a84ff',

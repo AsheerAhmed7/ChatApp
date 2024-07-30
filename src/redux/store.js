@@ -58,12 +58,12 @@ const reducer = (state = initialState, action) => {
       return state;
   }
 };
-const saveSubsetBlacklistFilter = createFilter('reducer', null, ['socket']);
+const BlacklistFilter = createFilter('reducer', null, ['socket']);
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  transforms: [saveSubsetBlacklistFilter],
+  transforms: [BlacklistFilter],
 };
 
 const persistReducers = persistReducer(persistConfig, reducer);

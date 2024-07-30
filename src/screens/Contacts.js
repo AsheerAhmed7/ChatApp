@@ -13,7 +13,7 @@ import {fetchPeople} from '../redux/action';
 import {heightToDp, widthToDp} from '../utils/responsive';
 import {useNavigation} from '@react-navigation/native';
 import io from 'socket.io-client';
-const SOCKET_SERVER_URL = 'http://192.168.1.12:3000';
+const SOCKET_SERVER_URL = 'http://192.168.1.3:3000';
 const Contacts = () => {
   const id = useSelector(state => state._id);
   const people = useSelector(state => state.people);
@@ -30,9 +30,11 @@ const Contacts = () => {
     dispatch({type: 'ADD_SOCKET', payload: socket});
     socket.on('connect', () => {
       socket.emit('addSocket', {id: id});
+      console.log('conneccteeedddddd ', id);
     });
     return () => {
       socket.disconnect();
+      console.log('disconnected');
       dispatch({type: 'ADD_SOCKET', payload: null});
     };
   }, []);

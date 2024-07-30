@@ -1,17 +1,17 @@
-import {useNavigation} from '@react-navigation/native';
+import {StackActions, useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 
 const SplashScreen = () => {
-  const data = useSelector(state => state);
+  const data = useSelector(state => state._id);
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(() => {
-      if (data._id) {
-        navigation.navigate('Home');
+      if (data) {
+        navigation.dispatch(StackActions.replace('Home'));
       } else {
-        navigation.navigate('Login');
+        navigation.dispatch(StackActions.replace('Login'));
       }
     }, 2000);
   }, []);

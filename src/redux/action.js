@@ -1,6 +1,6 @@
 import {StackActions} from '@react-navigation/native';
 
-const API_URL = 'http://192.168.1.12:3000';
+const API_URL = 'http://192.168.1.3:3000';
 export const addUser = async (data, navigation) => {
   try {
     const requestOptions = {
@@ -28,7 +28,7 @@ export const login = (data, navigation) => async dispatch => {
       },
       body: JSON.stringify(data),
     };
-    console.log('beforeeee backend');
+    console.log('beforeeee backend', API_URL);
     let response = await fetch(`${API_URL}/users/login`, requestOptions);
     if (response.status == 200) {
       response = await response.json();
